@@ -28,6 +28,7 @@
     "dependencies": {
         "laravel-mix-tailwind": "^0.1.2",
         "vue": "^2.6.14",
+        "vue-laravel-csrf": "^1.0.0",
         "vue-router": "^3.5.2"
     }
 }
