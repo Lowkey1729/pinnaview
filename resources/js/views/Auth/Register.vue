@@ -396,22 +396,22 @@ import RegisterModal from '../Modals/RegisterModal.vue';
 
             handleRegistration(){
                     this.load_spin = '',
-                    axios.get('/sanctum/csrf-cookie').then(response => {
-                            axios.post('/api/register', this.formData).then(response => {
+
+                            this.$store.dispatch('register', this.formData).then(response => {
                                     this.show = '';
                                     this.phone_number = this.formData.phone_number;
                                     console.log(response.message);
                                     // this.load_spin='hidden';
                             })
                             .catch(error => {
-                                 this.errors = error.response.data.errors;
+                                 this.errors = this.$store.getters.errorForm;
                                  this.error_border  = 'border-red-600';
                                  this.load_spin='hidden';
-                                console.error(error.response.data.errors);
+                                console.error(this.$store.getters.errorForm);
                             })
 
-                        })
-                        ;
+
+
             },
 
 

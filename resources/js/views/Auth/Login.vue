@@ -21,7 +21,7 @@
 
 
         <div class="
-          bg-white shadow-md rounded px-2 pt-6 pb-8 mb-4 flex flex-col md:w-6/12 lg:w-4/12   sm:w-full justify-center content-center
+          bg-white shadow-md rounded px-2 pt-6 pb-8 mb-4 flex flex-col md:w-6/12 lg:w-4/12   w-full justify-center content-center
         ">
             <form  @submit.prevent>
 
@@ -41,7 +41,7 @@
 
 
                     <div class="relative w-full flex flex-col items-center justify-center mb-4 ">
-                        <div class="absolute top-2  left-6 md:left-16 "> <i class=" text-black z-50 hover:text-black"><svg
+                        <div class="absolute top-2  left-2 md:left-16 "> <i class=" text-black z-50 hover:text-black"><svg
                                     width="25" height="25" viewBox="0 0 25 25" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path
@@ -52,14 +52,14 @@
 
                             </i>
                         </div>
-                        <input :class="errors.username ? error_border : ''" v-model="formData.username" class=" mb-6 pl-10  md:pl-12 lg:pl-10 shadow focus:border-yellow-500 focus:outline-none appearance-none  border rounded sm:w-full md:w-9/12 py-2 px-3 text-grey-darker
+                        <input :class="errors.username ? error_border : ''" v-model="formData.username" class=" mb-6 pl-10  md:pl-12 lg:pl-10 shadow focus:border-yellow-500 focus:outline-none appearance-none  border rounded w-full md:w-9/12 py-2 px-3 text-grey-darker
               " id="username" type="text" placeholder="Enter username or Phone number" />
                <p class="absolute top-11    left-4  md:left-14   font-bold  text-xs  text-red-600" v-for="error_username in errors.username" :key="error_username" >{{error_username}}</p>
 
                     </div>
 
                     <div class="relative w-full flex flex-col items-center justify-center ">
-                        <div class="absolute top-2 left-6 md:left-16 pr-4 "> <i class="  text-black z-50 hover:text-black"><svg
+                        <div class="absolute top-2 left-2 md:left-16 pr-4 "> <i class="  text-black z-50 hover:text-black"><svg
                                     width="25" height="25" viewBox="0 0 25 25" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path
@@ -73,7 +73,7 @@
 
                         </div>
 
-                        <div class="absolute top-3 md:right-14 right-2 pr-4 "> <button @click="showPassword"
+                        <div class="absolute top-3 right-2  md:right-14 right-2 pr-4 "> <button @click="showPassword"
                                 class=" outline-none focus:outline-none  text-yellow-600 z-50 hover:text-yellow-600">
                                 <div :class="show_lock">
                                     <svg width="23" height="18" viewBox="0 0 23 18" fill="none"
@@ -101,14 +101,14 @@
 
 
 
-                        <label class=" absolute left-4  md:left-14 mb-24 text-grey-darker text-sm font-bold mb-2" for="password">
+                        <label class=" absolute left-0  md:left-14 mb-24 text-grey-darker text-sm font-bold mb-2" for="password">
                             Password
                         </label>
                         <input :class="errors.password ? error_border : ''" v-model="formData.password" class="
-               pl-10  md:pl-12 lg:pl-10 shadow rounded focus:border-yellow-500 focus:outline-none appearance-none border border-red sm:w-full  md:w-9/12 py-2 px-3 text-grey-darker  mb-9
+               pl-10  md:pl-12 lg:pl-10 shadow rounded focus:border-yellow-500 focus:outline-none appearance-none border border-red w-full  md:w-9/12 py-2 px-3 text-grey-darker  mb-9
             " id="password" :type="type" placeholder="Enter your password" />
              <p class="absolute top-11   left-4  md:left-14   font-bold  text-xs  text-red-600" v-for="error_password in errors.password" :key="error_password" >{{error_password}}</p>
-                        <a class=" absolute left-4 md:left-14 mt-2 top-12 align-baseline font-bold text-sm text-blue text-yellow-600
+                        <a class=" absolute left-0 md:left-14 mt-2 top-12 align-baseline font-bold text-sm text-blue text-yellow-600
           " href="#">
                             Forgot Password?
                         </a>
@@ -121,7 +121,7 @@
 
                 <div class="flex flex-col items-center justify-center">
                     <button @click="handleLogin" class="
-              block w-9/12 bg-blue-450 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded justify-center  content-center
+              block w-full md:w-9/12 bg-blue-450 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded justify-center  content-center
             " type="button">
                          <span :class="load_spin" class="animate-spin absolute inline-flex h-5 w-5   rounded-full border-4  border-dotted border-red-400 "></span>
                         <span class="pl-6">Sign In</span>
@@ -142,7 +142,8 @@
 </template>
 
 <script>
-     export default {
+
+     export default{
 
          data() {
 
@@ -183,24 +184,24 @@
 
              handleLogin(){
                     this.load_spin = '';
-                    axios.get('/sanctum/csrf-cookie').then(response => {
-                            axios.post('/api/login', this.formData).then(response => {
-                                 this.load_spin='hidden';
-                                    console.log(response.message);
 
+                    this.$store.dispatch('login', this.formData)
+                            .then(response => {
+                                this.load_spin='hidden';
+                                 console.log(response.message);
+                                    this.$router.replace({
+                                        path: '/dashboard',
+                                  })
                             })
-                            .catch(error => {
-                                 this.errors = error.response.data.errors;
+                             .catch(error => {
+                                 this.errors = this.$store.getters.errorForm;
                                  this.error_border  = 'border-red-600';
                                  this.load_spin='hidden';
-                                 this.error_message = error.response.data.error_message;
-                                console.error(error.response.data.error_message);
+                                 this.error_message = this.$store.getters.errorMessage;
+                                console.error(this.$store.getters.errorMessage);
                             })
 
 
-
-                        })
-                        ;
 
 
 
@@ -208,7 +209,13 @@
          },
 
 
+
+
      }
      }
+
+
+
+
 
 </script>

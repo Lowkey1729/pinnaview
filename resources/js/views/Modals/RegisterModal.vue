@@ -31,7 +31,7 @@
             </div>
             <!--footer-->
             <div class="flex flex-col text-center justify-center items-center ">
-               <button @click.prevent="displayModal" class="
+               <button @click="handleVerification" class="
               block w-11/12 bg-blue-450 hover:bg-blue- text-white  py-2 px-4 rounded justify-center  content-center
             " >
                         Verify
@@ -72,6 +72,22 @@ export default {
 
     resendOTP(){
             this.show_message = 'Code successfully sent.';
+    },
+
+    handleVerification(){
+
+                axios.post('/api/verify_code').then(response =>{
+                        this.$router.push({
+                            path: '/dashboard',
+                        });
+                })
+                .catch(error =>{
+                        console.log(error.response.data);
+                })
+
+
+
+
     }
 },
 }

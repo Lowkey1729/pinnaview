@@ -35,6 +35,8 @@ class AuthController extends Controller
 
         // create user
 
+         //assign otp to user
+        $code = $this->generate_otp();
 
         $user = User::create([
             'name' => $request['name'],
@@ -43,19 +45,30 @@ class AuthController extends Controller
             'password' => Hash::make($request['password']),
             'phone_number' => $request['phone_number'],
             'date_of_birth' => date('y/m/d h:i:s', strtotime($request['d_o_b'])),
+            'verification_code' => $code,
         ]);
 
 
+
+
         // derive token for registeration
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken('auth_token')->accessToken;
+
+
 
         // return response
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
+            'errors' => '',
+            'user' => ['email'=>$user->email, 'id'=>$user->id],
 
-        ]);
+        ], 200);
     }
+
+
+
+
 
 
     public function login(Request $request)
@@ -85,12 +98,29 @@ class AuthController extends Controller
         }
 
         $user = User::where('username', $request['username'])->firstOrFail();
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken('auth_token')->accessToken;
 
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
             'errors' => '',
+            'user' => ['email'=>$user->email, 'id'=>$user->id],
         ], 200);
     }
+
+    public function generate_otp(){
+
+        //  generate five random codes
+        $result = bin2hex(openssl_random_pseudo_bytes(2)).substr(str_shuffle('1234567890'),0,1);
+        return $result;
+    }
+
+    public function verify_code(){
+        $token = Auth::user()->tokens();
+        return response()->json([
+            'access_token' => $token,
+            'message'=> 'verified',
+        ]);
+    }
 }
+
